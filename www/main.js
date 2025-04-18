@@ -11,8 +11,17 @@ $(document).ready(function () {
           effect: "bounceOut",
       },
 
+    });
+  // Siri configuration
+  var siriWave = new SiriWave({
+    container: document.getElementById("siri-container"),
+    width: 640,
+    height: 200,
+    style:"ios9",
+    amplitude:"1",
+    speed:"0.30",
+    autostart:true
   });
-
 
 //siri message animation
 $('.siri-message').textillate({
@@ -28,14 +37,13 @@ $('.siri-message').textillate({
   },
 
 });
+//mic button click event
+$("#MicBtn").click(function(e){
+  eel.playAssistantSound()
+  console.log("Mic button clicked");
+  $("#Oval").attr("hidden", true).hide();
+  $("#SiriWave").removeAttr("hidden").show();
 });
-  // Siri configuration
-  var siriWave = new SiriWave({
-    container: document.getElementById("siri-container"),
-    width: 640,
-    height: 200,
-    style:"ios9",
-    amplitude:"1",
-    speed:"0.30",
-    autostart:true
-  });
+
+});
+ 
