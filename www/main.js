@@ -26,23 +26,21 @@ $(document).ready(function () {
 //siri message animation
 $('.siri-message').textillate({
   loop: true,
-  sync: true,
   in: {
       effect: "fadeInUp",
-      sync:true,
   },
   out: {
     effect: "fadeOutUp",
-    sync:true,
   },
 
 });
 //mic button click event
 $("#MicBtn").click(function(e){
-  eel.playAssistantSound()
-  $("#Oval").attr("hidden", true);
-  $("#SiriWave").attr("hidden",false);
-  eel.takecommand()()
+  console.log("Mic button clicked")
+  eel.playAssistantSound();
+  $("#Oval").attr("hidden", true).hide();
+  $("#SiriWave").removeAttr("hidden").show();
+  eel.allCommands()()
 });
 
 });

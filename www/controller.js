@@ -8,7 +8,7 @@ $(document).ready(function () {
   //Display hool
   eel.expose(ShowHood);
   function ShowHood() {
-    $("#Oval").attr("hidden", false);
-    $("#siriwave").attr("hidden", true);
+    $("#Oval").removeAttr("hidden").show();
+    $("#SiriWave").attr("hidden", true).hide();
   }
 });
