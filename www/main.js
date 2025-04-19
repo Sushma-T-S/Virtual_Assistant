@@ -40,9 +40,9 @@ $('.siri-message').textillate({
 //mic button click event
 $("#MicBtn").click(function(e){
   eel.playAssistantSound()
-  console.log("Mic button clicked");
-  $("#Oval").attr("hidden", true).hide();
-  $("#SiriWave").removeAttr("hidden").show();
+  $("#Oval").attr("hidden", true);
+  $("#SiriWave").attr("hidden",false);
+  eel.takecommand()()
 });
 
 });
