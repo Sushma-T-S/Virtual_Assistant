@@ -1,5 +1,5 @@
 
-#to run jarvis
+# # to run jarvis
 # import multiprocessing
 
 
@@ -28,33 +28,63 @@
 #         p2.join()
 
 #     print("system stop")
+# import multiprocessing
+
+# def startJarvis():
+#     try:
+#         print("process 1 is running", flush=True)
+#         from main import start
+#         start()
+#     except Exception as e:
+#         print(f"Error in process 1: {e}", flush=True)
+
+# def listenHotword():
+#     try:
+#         print("process 2 is running.", flush=True)
+#         from engine.features import hotword
+#         hotword()
+#     except Exception as e:
+#         print(f"Error in process 2: {e}", flush=True)
+
+# if __name__ == '__main__':
+#     p1 = multiprocessing.Process(target=startJarvis)
+#     p2 = multiprocessing.Process(target=listenHotword)
+#     p1.start()
+#     p2.start()
+#     p1.join()
+
+#     if p2.is_alive():
+#         p2.terminate()
+#         p2.join()
+
+#     print("system stop", flush=True)
 import multiprocessing
 
+# To run Jarvis
 def startJarvis():
-    try:
-        print("process 1 is running", flush=True)
+        # Code for process 1
+        print("Process 1 is running.")
         from main import start
         start()
-    except Exception as e:
-        print(f"Error in process 1: {e}", flush=True)
 
+# To run hotword
 def listenHotword():
-    try:
-        print("process 2 is running.", flush=True)
+        # Code for process 2
+        print("Process 2 is running.")
         from engine.features import hotword
         hotword()
-    except Exception as e:
-        print(f"Error in process 2: {e}", flush=True)
 
+
+    # Start both processes
 if __name__ == '__main__':
-    p1 = multiprocessing.Process(target=startJarvis)
-    p2 = multiprocessing.Process(target=listenHotword)
-    p1.start()
-    p2.start()
-    p1.join()
+        p1 = multiprocessing.Process(target=startJarvis)
+        p2 = multiprocessing.Process(target=listenHotword)
+        p1.start()
+        p2.start()
+        p1.join()
 
-    if p2.is_alive():
-        p2.terminate()
-        p2.join()
+        if p2.is_alive():
+            p2.terminate()
+            p2.join()
 
-    print("system stop", flush=True)
+        print("system stop")

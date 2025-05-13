@@ -1,7 +1,9 @@
 import os
 import re
+from shlex import quote
 import sqlite3
 import struct
+import subprocess
 import time
 import webbrowser
 # import sqlite3
@@ -10,11 +12,12 @@ from playsound import playsound
 import eel
 import pvporcupine
 import pyaudio
+import pyautogui
 import pywhatkit as kit
 # from engine import hotword
 from engine.command import speak
 from engine.config import ASSISTANT_NAME
-from engine.helper import extract_yt_term
+from engine.helper import extract_yt_term, remove_words
 # from engine.helper import extract_yt_term  # Make sure path is correct
 
 # # Rename your local function
@@ -94,93 +97,59 @@ def hotword():
             paud.terminate()
 
 
+# find contacts
+def findContact(query):
+    
+    words_to_remove = [ASSISTANT_NAME, 'make', 'a', 'to', 'phone', 'call', 'send', 'message', 'wahtsapp', 'video']
+    query = remove_words(query, words_to_remove)
 
+    try:
+        query = query.strip().lower()
+        cursor.execute("SELECT mobile_no FROM contacts WHERE LOWER(name) LIKE ? OR LOWER(name) LIKE ?", ('%' + query + '%', query + '%'))
+        results = cursor.fetchall()
+        print(results[0][0])
+        mobile_number_str = str(results[0][0])
 
+        if not mobile_number_str.startswith('+91'):
+            mobile_number_str = '+91' + mobile_number_str
 
+        return mobile_number_str, query
+    except:
+        speak('not exist in contacts')
+        return 0, 0
 
+import time
+import subprocess
+import pyautogui
+from urllib.parse import quote
 
-#     if not query:
-#         speak("Please specify what to open.")
-#         return
+def whatsApp(mobile_no, message, flag, name):
+    if flag == 'message':
+        jarvis_message = "Message sent successfully to " + name
+    elif flag == 'call':
+        message = ''
+        jarvis_message = "Calling " + name
+    elif flag == 'video call':
+        message = ''
+        jarvis_message = "Starting video call with " + name
 
-#     try:
-#         # Local system command
-#         cursor.execute('SELECT path FROM sys_command WHERE name = ?', (query,))
-#         result = cursor.fetchone()
-#         if result:
-#             speak(f"Opening {query}")
-#             os.startfile(result[0])
-#             return
+    # Encode and prepare WhatsApp link
+    encoded_message = quote(message)
+    whatsapp_url = f"whatsapp://send?phone={mobile_no}&text={encoded_message}"
 
-#         # Web command
-#         cursor.execute('SELECT url FROM web_command WHERE name = ?', (query,))
-#         result = cursor.fetchone()
-#         if result:
-#             speak(f"Opening {query} in the browser")
-#             webbrowser.open(result[0])
-#             return
+    # Launch WhatsApp Desktop
+    subprocess.run(f'start "" "{whatsapp_url}"', shell=True)
+    time.sleep(5)  # Ensure the app is open
 
-#         # Try system fallback
-#         speak(f"Trying to open {query}")
-#         os.system(f'start {query}')
+    # Depending on the call type, click the correct icon
+    if flag == 'message':
+        pyautogui.press('enter')  # Send message
+    elif flag == 'call':
+        time.sleep(2)  # Wait for chat to open
+        pyautogui.click(1265, 100)  # Click on the voice call button (use correct coordinates)
+    elif flag == 'video call':
+        time.sleep(2)  # Wait for chat to open
+        pyautogui.click(1210, 100)  # Click on the video call button (use correct coordinates)
 
-#     except Exception as e:
-#         speak("Something went wrong")
-#         print(f"Error: {e}")
-
-
-# def openCommand(query):
-#     query = query.lower()
-
- 
-
-#     # ... rest of your system and web command logic
-# # old code by sushma 
-# # import os
-# # import sqlite3
-# # import webbrowser
-# # from playsound import playsound
-# # import eel
-# # from .command import speak
-# # from engine.config import ASSISTANT_NAME
-# # from engine.helper import extract_yt_term
-
-# # # Connect to database
-# # con = sqlite3.connect("jarvis.db")
-# # cursor = con.cursor()
-
-# # @eel.expose
-# # def playAssistantSound():
-# #     music_dir = "www\\assets\\audio\\pop-cartoon-328167.mp3"
-# #     playsound(music_dir)
-
-# # def openCommand(query):
-# #     query = query.replace(ASSISTANT_NAME, "")
-# #     query = query.replace("open", "")
-# #     query = query.lower().strip()
-
-# #     if not query:
-# #         speak("Please specify what to open.")
-# #         return
-
-# #     try:
-# #         cursor.execute('SELECT path FROM sys_command WHERE name = ?', (query,))
-# #         result = cursor.fetchone()
-# #         if result:
-# #             speak(f"Opening {query}")
-# #             os.startfile(result[0])
-# #             return
-
-# #         cursor.execute('SELECT url FROM web_command WHERE name = ?', (query,))
-# #         result = cursor.fetchone()
-# #         if result:
-# #             speak(f"Opening {query} in the browser")
-# #             webbrowser.open(result[0])
-# #             return
-
-# #         speak(f"Trying to open {query}")
-# #         os.system(f'start {query}')
-
-# #     except Exception as e:
-# #         speak("Something went wrong")
-# #         print(f"Error: {e}")
+    time.sleep(1)  # Wait for the action to complete
+    speak(jarvis_message)
